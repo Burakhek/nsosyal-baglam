@@ -1,0 +1,34 @@
+{
+  "status": "ACTUAL_SYNTHETIC_PROTOTYPE",
+  "baseline_metrics": {
+    "creator_diversity_top5": 5,
+    "small_creator_top5_share": 0.2,
+    "exposure_gini_top5": 0.3241,
+    "mean_relevance_top5": 0.846
+  },
+  "fair_metrics": {
+    "creator_diversity_top5": 5,
+    "small_creator_top5_share": 0.4,
+    "exposure_gini_top5": 0.3241,
+    "mean_relevance_top5": 0.884
+  },
+  "baseline_order": [
+    "TeknoMerak",
+    "BilimNotu",
+    "GündemHızlı",
+    "KodDefteri",
+    "YeniFikir",
+    "MinikAtölye",
+    "TekrarHaber"
+  ],
+  "fair_order": [
+    "YeniFikir",
+    "MinikAtölye",
+    "BilimNotu",
+    "TeknoMerak",
+    "KodDefteri",
+    "GündemHızlı",
+    "TekrarHaber"
+  ],
+  "note": "Aynı sentetik aday kümesinde deterministik karşılaştırma."
+}

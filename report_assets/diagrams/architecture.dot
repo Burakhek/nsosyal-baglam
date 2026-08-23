@@ -1,0 +1,16 @@
+digraph G {
+  rankdir=TB; graph [bgcolor="white", pad=0.3, nodesep=0.5, ranksep=0.6];
+  node [shape=box, style="rounded,filled", fillcolor="#F4F8FA", color="#7B9AAA", fontname="Arial", fontsize=12, margin="0.15,0.10"];
+  edge [color="#557788", arrowsize=0.8];
+  client [label="İstemci Katmanı\nMobil / Web / Demo"];
+  api [label="API / Entegrasyon Katmanı\nFastAPI"];
+  baglam [label="BAĞLAM\nTürkçe Moderasyon"];
+  adalet [label="ADALET\nFair Visibility Ranking"];
+  denge [label="DENGE\nBehavioral Wellbeing"];
+  data [label="Veri / Feature / Audit\nSentetik Demo + Metrikler"];
+  eval [label="Değerlendirme\nTestler • Metrikler • Model Sürümü"];
+  client -> api;
+  api -> baglam; api -> adalet; api -> denge;
+  baglam -> data; adalet -> data; denge -> data;
+  data -> eval;
+}

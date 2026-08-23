@@ -1,0 +1,3 @@
+digraph G { rankdir=LR; graph [bgcolor="white", pad=0.2]; node [shape=box,style="rounded,filled",fillcolor="#F4F8FA",color="#7B9AAA",fontname="Arial"]; edge [color="#557788"];
+a[label="Gönderi"];b[label="Türkçe normalizasyon"];c[label="Kelime + karakter n-gram"];d[label="Güvenlik sınıfı"];e[label="Anlatım biçimi"];f[label="Güven / karar mantığı"];g[label="Allow"];h[label="Warn"];i[label="Review"];
+a->b->c; c->d; c->e; d->f; e->f; f->g; f->h; f->i; }

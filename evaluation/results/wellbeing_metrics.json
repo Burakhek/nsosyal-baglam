@@ -1,0 +1,83 @@
+{
+  "status": "ACTUAL_CONTROLLED_SCENARIOS",
+  "scenarios": {
+    "intentional": {
+      "session_duration_sec": 420,
+      "posts_scrolled": 24,
+      "viewed_posts": 20,
+      "rapid_skips": 3,
+      "total_dwell_sec": 220,
+      "reentry_count": 1,
+      "enabled": true,
+      "scroll_velocity": 3.43,
+      "mean_dwell_time": 11.0,
+      "rapid_skip_ratio": 0.15,
+      "state": "balanced",
+      "nudge": false,
+      "reason": "Bu oturumda mola önerisi için gerekli davranış örüntüsü ve süre koşulları birlikte oluşmadı.",
+      "thresholds": {
+        "min_session_sec": 180,
+        "scroll_velocity": 18,
+        "rapid_skip_ratio": 0.6,
+        "max_mean_dwell_sec": 3.2
+      },
+      "disclaimer": "Davranış örüntüsü değerlendirmesidir; tıbbi veya psikolojik tanı değildir."
+    },
+    "rapid": {
+      "session_duration_sec": 360,
+      "posts_scrolled": 150,
+      "viewed_posts": 120,
+      "rapid_skips": 96,
+      "total_dwell_sec": 160,
+      "reentry_count": 2,
+      "enabled": true,
+      "scroll_velocity": 25.0,
+      "mean_dwell_time": 1.33,
+      "rapid_skip_ratio": 0.8,
+      "state": "break_suggestion",
+      "nudge": true,
+      "reason": "Son birkaç dakikada yüksek kaydırma hızı, kısa görüntüleme süresi ve yüksek hızlı-geçiş oranı birlikte görüldü.",
+      "thresholds": {
+        "min_session_sec": 180,
+        "scroll_velocity": 18,
+        "rapid_skip_ratio": 0.6,
+        "max_mean_dwell_sec": 3.2
+      },
+      "disclaimer": "Davranış örüntüsü değerlendirmesidir; tıbbi veya psikolojik tanı değildir."
+    },
+    "short_fast": {
+      "session_duration_sec": 50,
+      "posts_scrolled": 35,
+      "viewed_posts": 30,
+      "rapid_skips": 24,
+      "total_dwell_sec": 55,
+      "reentry_count": 0,
+      "enabled": true,
+      "scroll_velocity": 42.0,
+      "mean_dwell_time": 1.83,
+      "rapid_skip_ratio": 0.8,
+      "state": "rapid_pattern",
+      "nudge": false,
+      "reason": "Bu oturumda mola önerisi için gerekli davranış örüntüsü ve süre koşulları birlikte oluşmadı.",
+      "thresholds": {
+        "min_session_sec": 180,
+        "scroll_velocity": 18,
+        "rapid_skip_ratio": 0.6,
+        "max_mean_dwell_sec": 3.2
+      },
+      "disclaimer": "Davranış örüntüsü değerlendirmesidir; tıbbi veya psikolojik tanı değildir."
+    },
+    "disabled": {
+      "session_duration_sec": 400,
+      "posts_scrolled": 200,
+      "viewed_posts": 180,
+      "rapid_skips": 150,
+      "total_dwell_sec": 90,
+      "reentry_count": 2,
+      "enabled": false,
+      "state": "disabled",
+      "nudge": false,
+      "reason": "Dijital iyilik hâli önerileri kullanıcı tarafından kapatılmış."
+    }
+  }
+}

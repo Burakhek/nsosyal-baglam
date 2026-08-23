@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>NSosyal Bağlam — Entegrasyon Prototipi</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <aside class="left-rail" aria-label="Ana menü">
+      <div class="brand" aria-label="NSosyal Bağlam">
+        <div class="brand-mark">N</div>
+        <div class="brand-text">NSosyal</div>
+      </div>
+      <nav id="leftNav" class="nav-list"></nav>
+      <button id="composePrimary" class="primary compose-primary" type="button">Gönderi oluştur</button>
+      <div class="account-mini">
+        <div class="avatar avatar-amber">DA</div>
+        <div class="account-meta"><strong>Deniz Aksoy</strong><span>@denizaksoy</span></div>
+      </div>
+    </aside>
+
+    <main id="mainColumn" class="main-column" tabindex="-1"></main>
+
+    <aside id="rightRail" class="right-rail" aria-label="Gündem"></aside>
+  </div>
+
+  <nav id="mobileNav" class="mobile-nav" aria-label="Mobil menü"></nav>
+
+  <dialog id="appealDialog" class="modal">
+    <form method="dialog" class="modal-card" id="appealForm">
+      <div class="modal-head">
+        <div>
+          <h2>Moderasyon kararına itiraz</h2>
+          <p>Bu akış yalnızca prototip inceleme kuyruğunu simüle eder.</p>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Kapat">✕</button>
+      </div>
+      <div class="modal-body" id="appealBody">
+        <div class="decision-summary">
+          <strong id="appealDecision">Karar: Uyarı</strong>
+          <span id="appealConfidence">Güven: —</span>
+        </div>
+        <label class="field-label">Neden yeniden incelenmeli?
+          <textarea id="appealReason" minlength="3" maxlength="500" required>İfadenin bağlamının ve anlatım biçiminin birlikte yeniden değerlendirilmesini rica ediyorum.</textarea>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="secondary" value="cancel" type="button" id="cancelAppeal">Vazgeç</button>
+        <button class="primary" type="submit" id="sendAppeal">İncelemeye gönder</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="reasonDialog" class="modal">
+    <div class="modal-card compact-modal">
+      <div class="modal-head"><div><h2>Neden görüyorum?</h2><p>Adil Görünürlük sıralama açıklaması</p></div><button class="icon-btn" id="closeReason">✕</button></div>
+      <div class="modal-body" id="reasonBody"></div>
+    </div>
+  </dialog>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

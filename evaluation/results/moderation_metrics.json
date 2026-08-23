@@ -1,0 +1,100 @@
+{
+  "status": "ACTUAL_SYNTHETIC_PROTOTYPE",
+  "dataset_type": "synthetic prototype dataset",
+  "train_size": 59,
+  "test_size": 20,
+  "macro_f1": 0.493,
+  "weighted_f1": 0.5693,
+  "macro_precision": 0.4924,
+  "macro_recall": 0.5033,
+  "labels": [
+    "ambiguous_review",
+    "benign",
+    "constructive_criticism",
+    "harassment",
+    "toxic_attack"
+  ],
+  "confusion_matrix": [
+    [
+      2,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      6,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      2,
+      3,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      0
+    ]
+  ],
+  "classification_report": {
+    "ambiguous_review": {
+      "precision": 0.6666666666666666,
+      "recall": 0.6666666666666666,
+      "f1-score": 0.6666666666666666,
+      "support": 3.0
+    },
+    "benign": {
+      "precision": 0.5454545454545454,
+      "recall": 0.75,
+      "f1-score": 0.631578947368421,
+      "support": 8.0
+    },
+    "constructive_criticism": {
+      "precision": 0.75,
+      "recall": 0.6,
+      "f1-score": 0.6666666666666666,
+      "support": 5.0
+    },
+    "harassment": {
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1-score": 0.5,
+      "support": 2.0
+    },
+    "toxic_attack": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 2.0
+    },
+    "accuracy": 0.6,
+    "macro avg": {
+      "precision": 0.4924242424242424,
+      "recall": 0.5033333333333333,
+      "f1-score": 0.49298245614035086,
+      "support": 20.0
+    },
+    "weighted avg": {
+      "precision": 0.5556818181818182,
+      "recall": 0.6,
+      "f1-score": 0.5692982456140351,
+      "support": 20.0
+    }
+  },
+  "limitations": "Synthetic small dataset; these values are not NSosyal production performance or a BERTurk benchmark."
+}

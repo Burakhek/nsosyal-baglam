@@ -1,0 +1,225 @@
+{
+  "moderation": {
+    "status": "ACTUAL_SYNTHETIC_PROTOTYPE",
+    "dataset_type": "synthetic prototype dataset",
+    "train_size": 59,
+    "test_size": 20,
+    "macro_f1": 0.493,
+    "weighted_f1": 0.5693,
+    "macro_precision": 0.4924,
+    "macro_recall": 0.5033,
+    "labels": [
+      "ambiguous_review",
+      "benign",
+      "constructive_criticism",
+      "harassment",
+      "toxic_attack"
+    ],
+    "confusion_matrix": [
+      [
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        6,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    ],
+    "classification_report": {
+      "ambiguous_review": {
+        "precision": 0.6666666666666666,
+        "recall": 0.6666666666666666,
+        "f1-score": 0.6666666666666666,
+        "support": 3.0
+      },
+      "benign": {
+        "precision": 0.5454545454545454,
+        "recall": 0.75,
+        "f1-score": 0.631578947368421,
+        "support": 8.0
+      },
+      "constructive_criticism": {
+        "precision": 0.75,
+        "recall": 0.6,
+        "f1-score": 0.6666666666666666,
+        "support": 5.0
+      },
+      "harassment": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1-score": 0.5,
+        "support": 2.0
+      },
+      "toxic_attack": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 2.0
+      },
+      "accuracy": 0.6,
+      "macro avg": {
+        "precision": 0.4924242424242424,
+        "recall": 0.5033333333333333,
+        "f1-score": 0.49298245614035086,
+        "support": 20.0
+      },
+      "weighted avg": {
+        "precision": 0.5556818181818182,
+        "recall": 0.6,
+        "f1-score": 0.5692982456140351,
+        "support": 20.0
+      }
+    },
+    "limitations": "Synthetic small dataset; these values are not NSosyal production performance or a BERTurk benchmark."
+  },
+  "ranking": {
+    "status": "ACTUAL_SYNTHETIC_PROTOTYPE",
+    "baseline_metrics": {
+      "creator_diversity_top5": 5,
+      "small_creator_top5_share": 0.2,
+      "exposure_gini_top5": 0.3241,
+      "mean_relevance_top5": 0.846
+    },
+    "fair_metrics": {
+      "creator_diversity_top5": 5,
+      "small_creator_top5_share": 0.4,
+      "exposure_gini_top5": 0.3241,
+      "mean_relevance_top5": 0.884
+    },
+    "baseline_order": [
+      "TeknoMerak",
+      "BilimNotu",
+      "GündemHızlı",
+      "KodDefteri",
+      "YeniFikir",
+      "MinikAtölye",
+      "TekrarHaber"
+    ],
+    "fair_order": [
+      "YeniFikir",
+      "MinikAtölye",
+      "BilimNotu",
+      "TeknoMerak",
+      "KodDefteri",
+      "GündemHızlı",
+      "TekrarHaber"
+    ],
+    "note": "Aynı sentetik aday kümesinde deterministik karşılaştırma."
+  },
+  "wellbeing": {
+    "status": "ACTUAL_CONTROLLED_SCENARIOS",
+    "scenarios": {
+      "intentional": {
+        "session_duration_sec": 420,
+        "posts_scrolled": 24,
+        "viewed_posts": 20,
+        "rapid_skips": 3,
+        "total_dwell_sec": 220,
+        "reentry_count": 1,
+        "enabled": true,
+        "scroll_velocity": 3.43,
+        "mean_dwell_time": 11.0,
+        "rapid_skip_ratio": 0.15,
+        "state": "balanced",
+        "nudge": false,
+        "reason": "Bu oturumda mola önerisi için gerekli davranış örüntüsü ve süre koşulları birlikte oluşmadı.",
+        "thresholds": {
+          "min_session_sec": 180,
+          "scroll_velocity": 18,
+          "rapid_skip_ratio": 0.6,
+          "max_mean_dwell_sec": 3.2
+        },
+        "disclaimer": "Davranış örüntüsü değerlendirmesidir; tıbbi veya psikolojik tanı değildir."
+      },
+      "rapid": {
+        "session_duration_sec": 360,
+        "posts_scrolled": 150,
+        "viewed_posts": 120,
+        "rapid_skips": 96,
+        "total_dwell_sec": 160,
+        "reentry_count": 2,
+        "enabled": true,
+        "scroll_velocity": 25.0,
+        "mean_dwell_time": 1.33,
+        "rapid_skip_ratio": 0.8,
+        "state": "break_suggestion",
+        "nudge": true,
+        "reason": "Son birkaç dakikada yüksek kaydırma hızı, kısa görüntüleme süresi ve yüksek hızlı-geçiş oranı birlikte görüldü.",
+        "thresholds": {
+          "min_session_sec": 180,
+          "scroll_velocity": 18,
+          "rapid_skip_ratio": 0.6,
+          "max_mean_dwell_sec": 3.2
+        },
+        "disclaimer": "Davranış örüntüsü değerlendirmesidir; tıbbi veya psikolojik tanı değildir."
+      },
+      "short_fast": {
+        "session_duration_sec": 50,
+        "posts_scrolled": 35,
+        "viewed_posts": 30,
+        "rapid_skips": 24,
+        "total_dwell_sec": 55,
+        "reentry_count": 0,
+        "enabled": true,
+        "scroll_velocity": 42.0,
+        "mean_dwell_time": 1.83,
+        "rapid_skip_ratio": 0.8,
+        "state": "rapid_pattern",
+        "nudge": false,
+        "reason": "Bu oturumda mola önerisi için gerekli davranış örüntüsü ve süre koşulları birlikte oluşmadı.",
+        "thresholds": {
+          "min_session_sec": 180,
+          "scroll_velocity": 18,
+          "rapid_skip_ratio": 0.6,
+          "max_mean_dwell_sec": 3.2
+        },
+        "disclaimer": "Davranış örüntüsü değerlendirmesidir; tıbbi veya psikolojik tanı değildir."
+      },
+      "disabled": {
+        "session_duration_sec": 400,
+        "posts_scrolled": 200,
+        "viewed_posts": 180,
+        "rapid_skips": 150,
+        "total_dwell_sec": 90,
+        "reentry_count": 2,
+        "enabled": false,
+        "state": "disabled",
+        "nudge": false,
+        "reason": "Dijital iyilik hâli önerileri kullanıcı tarafından kapatılmış."
+      }
+    }
+  },
+  "latency": {
+    "status": "ACTUAL_LOCAL_PROTOTYPE",
+    "moderation_ms_median": 1.494,
+    "moderation_ms_p95": 2.024,
+    "environment": "local container; not NSosyal production"
+  }
+}

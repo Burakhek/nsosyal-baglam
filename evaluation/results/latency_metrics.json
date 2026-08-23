@@ -1,0 +1,6 @@
+{
+  "status": "ACTUAL_LOCAL_PROTOTYPE",
+  "moderation_ms_median": 1.947,
+  "moderation_ms_p95": 2.482,
+  "environment": "local container; not NSosyal production"
+}
