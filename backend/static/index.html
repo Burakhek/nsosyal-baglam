@@ -36,12 +36,12 @@
           <h2>Moderasyon kararına itiraz</h2>
           <p>Bu akış yalnızca prototip inceleme kuyruğunu simüle eder.</p>
         </div>
-        <button class="icon-btn" value="cancel" aria-label="Kapat">✕</button>
+        <button class="icon-btn" type="button" id="closeAppealTop" aria-label="Kapat">✕</button>
       </div>
       <div class="modal-body" id="appealBody">
         <div class="decision-summary">
           <strong id="appealDecision">Karar: Uyarı</strong>
-          <span id="appealConfidence">Güven: —</span>
+          <span id="appealConfidence">Modelin kararından eminliği: —</span>
         </div>
         <label class="field-label">Neden yeniden incelenmeli?
           <textarea id="appealReason" minlength="3" maxlength="500" required>İfadenin bağlamının ve anlatım biçiminin birlikte yeniden değerlendirilmesini rica ediyorum.</textarea>

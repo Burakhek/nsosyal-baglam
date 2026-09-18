@@ -1,0 +1,1 @@
+Bu dosya paket oluşturulduktan sonra ZIP SHA-256 özetiyle birlikte teslim notunda paylaşılır.

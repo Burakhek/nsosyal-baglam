@@ -66,6 +66,23 @@ py -3.14 -m venv .venv314
 
 PowerShell `Activate.ps1` kullanmak zorunda değildir.
 
+
+## macOS / MacBook Air — önerilen kurulum
+
+Kök klasörde önce:
+
+```text
+setup_mac.command
+```
+
+Ardından uygulamayı açmak için:
+
+```text
+run_mac.command
+```
+
+İlk kurulumda Python paketleri indirilir. Kurulum tamamlandıktan sonra uygulamanın çalışması için internet gerekmez; tarayıcıda `http://127.0.0.1:8000` açılır.
+
 ## Python 3.14 paket stratejisi
 
 `requirements.txt` 2026-08 itibarıyla Python 3.14 destekleyen sürümlere taşınmıştır. Özellikle eski prototipte kurulum sorunu çıkaran scikit-learn 1.7.1 yerine **scikit-learn 1.9.0** kullanılır; bu sürüm CPython 3.14 Windows x86-64 wheel yayımlar.
@@ -77,7 +94,7 @@ cd backend
 .\.venv314\Scripts\python.exe -m pytest -q
 ```
 
-Beklenen mevcut test sayısı: **12**.
+Beklenen final-demo test sayısı: **21**.
 
 ## Gerçek teknik durum
 
@@ -121,3 +138,6 @@ Ayrıntılı kayıt:
 `docs/nsosyal-ui-research-2026.md`
 
 UI referansında yalnızca kamuya açık/gözlemlenebilir ürün yapısı kullanılır; erişilemeyen ekranlar “resmî NSosyal tasarımı” diye uydurulmaz.
+
+## Final Context Guard v4 (2026-09-16)
+Canlı BAĞLAM motoru, rapordaki TF-IDF + Logistic Regression tabanını koruyarak Türkçe bağlam/küfür güvenlik katmanıyla güçlendirilmiştir. Kişiye yöneltilmiş hakaret/küfür, hedefi belirsiz argo, alıntı/reddetme bağlamı, bazı gizlenmiş yazımlar ve düşük model güveni ayrı ele alınır. Arayüzde `Modelin kararından eminliği`, `Zarar sinyali` ve `İroni / sarkazm sinyali` gösterilir; bunlar kalibre edilmiş olasılık değildir. Ayrıntılar `FINAL_DEMO_NOTES_2026-09-16_CONTEXT_GUARD_V4.md` dosyasındadır.

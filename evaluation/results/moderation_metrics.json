@@ -1,6 +1,7 @@
 {
   "status": "ACTUAL_SYNTHETIC_PROTOTYPE",
   "dataset_type": "synthetic prototype dataset",
+  "metric_scope": "statistical baseline only; final demo also uses deterministic Turkish context rules",
   "train_size": 59,
   "test_size": 20,
   "macro_f1": 0.493,

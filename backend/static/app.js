@@ -11,6 +11,17 @@
     return r.json();
   };
 
+
+  const PREF_KEY = 'nsosyal-baglam-prefs-v1';
+  const HIDE_BALANCE_KEY = 'nsosyal-baglam-balance-hidden-date';
+  const defaultPrefs = {context:true,fair:true,balance:true,explain:true};
+  const loadPrefs = () => {
+    try { return {...defaultPrefs, ...JSON.parse(sessionStorage.getItem(PREF_KEY) || '{}')}; }
+    catch { return {...defaultPrefs}; }
+  };
+  const savePrefs = prefs => { try { sessionStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch {} };
+  const todayKey = () => new Date().toISOString().slice(0,10);
+
   const I = (name, cls='') => {
     const paths = {
       home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h5v-5h3v5h5v-9.5"/>',
@@ -49,7 +60,8 @@
   const state = {
     page:'home', feedMode:'normal', moderation:null, ranking:null, wellbeing:null,
     metrics:{moderation:null, ranking:null, wellbeing:null}, activeProfileTab:'timeline', activeExploreTab:'trends',
-    composer:'Mükemmel, yine uygulamayı çökerttin 👏', prefs:{context:true,fair:true,balance:true,explain:true}
+    composer:'Mükemmel, yine uygulamayı çökerttin 👏', prefs:loadPrefs(),
+    balanceHiddenToday:false, breakTimer:null
   };
 
   const nav = [
@@ -96,35 +108,36 @@
   }
 
   function moderationCard(){
+    if(!state.prefs.context) return '';
     const m=state.moderation;
-    if(!m || !state.prefs.context) return '';
-    const decision = m.decision==='allow'?'Yayınlanabilir':m.decision==='review'?'İnceleme öner': 'Bağlamı kontrol et';
-    return `<div class="context-assistant" id="contextAssistant">
+    const decision = !m?'':m.decision==='allow'?'Yayınlanabilir':m.decision==='review'?'İnceleme öner':'Bağlamı kontrol et';
+    const explanation = !m?'':`${m.explanation||''}${m.style_label==='sarcasm_irony'?' Anlatım biçimi ironi/sarkazm sinyali taşıyor.':''}`;
+    return `<div class="context-assistant${m?'':' hidden'}" id="contextAssistant">
       <div class="context-top"><div class="context-icon">⚠</div><div class="context-copy">
         <div class="context-label">BAĞLAM <span>Yayınlamadan önce</span></div>
-        <div class="context-message">${esc(m.explanation)} ${m.style_label==='sarcasm_irony'?'Anlatım biçimi ironi/sarkazm sinyali taşıyor.':''}</div>
+        <div class="context-message" id="contextMessage">${esc(explanation)}</div>
       </div><button class="icon-btn" id="dismissContext" aria-label="Öneriyi kapat">✕</button></div>
-      <dl class="metric-mini"><div><dt>Karar</dt><dd>${decision}</dd></div><div><dt>Güven</dt><dd>${pct(m.confidence)}</dd></div><div><dt>Zarar riski</dt><dd>${pct(m.harm_score)}</dd></div><div><dt>İroni / sarkazm</dt><dd>${pct(m.sarcasm_score)}</dd></div></dl>
-      <div class="context-actions"><button class="primary" id="rewriteBtn">Düzenle</button><button class="ghost" id="publishAnyway">Yine de Yayınla</button><button class="ghost" id="appealBtn">İtiraz et</button><span class="inline-status">${esc(m.model_version)} · ${m.latency_ms} ms</span></div>
+      <dl class="metric-mini"><div><dt>Karar</dt><dd id="contextDecision">${esc(decision)}</dd></div><div><dt>Modelin kararından eminliği</dt><dd id="contextConfidence">${m?pct(m.confidence):''}</dd></div><div><dt>Zarar sinyali</dt><dd id="contextHarm">${m?pct(m.harm_score):''}</dd></div><div><dt>İroni / sarkazm sinyali</dt><dd id="contextSarcasm">${m?pct(m.sarcasm_score):''}</dd></div></dl>
+      <div class="context-actions"><button class="primary" id="rewriteBtn">Düzenle</button><button class="ghost" id="publishAnyway">Yine de Yayınla</button><button class="ghost" id="appealBtn">İtiraz et</button><span class="inline-status" id="contextStatus">${m?`${esc(m.model_version)} · ${m.latency_ms} ms`:''}</span></div>
     </div>`;
   }
 
   function feedPost(item){
-    const s=seedPosts[item.id]||seedPosts[3]; const discover = state.feedMode==='fair' && Number(item.fairness_adjustment)>0.04 && Number(item.quality)>=.7;
+    const s=seedPosts[item.id]||{name:item.creator_name||'Deniz Aksoy',handle:'denizaksoy',initials:'DA',tone:'amber',age:'şimdi',replies:0,reshares:0,likes:0,views:'0'}; const discover = state.feedMode==='fair' && Number(item.fairness_adjustment)>0.04 && Number(item.quality)>=.7;
     return `<article class="post" data-post="${item.id}">
       ${discover?`<div class="discovery-tag">${I('scale')} Keşif fırsatı · görece az görünür ama kaliteli içerik</div>`:''}
       <div class="post-row"><div class="avatar avatar-${s.tone}">${s.initials}</div><div class="post-main">
         <div class="post-head"><div class="identity"><strong>${esc(s.name)}</strong>${s.verified?'<span class="verified">✓</span>':''}<span class="handle">@${esc(s.handle)} · ${esc(s.age)}</span></div><button class="icon-btn" aria-label="Gönderi seçenekleri">${I('more')}</button></div>
         <p class="post-text">${esc(item.text)}</p>
         ${s.visual?`<div class="post-visual ${s.visual}" role="img" aria-label="Gönderi için sentetik prototip medya alanı"></div>`:''}
-        ${state.feedMode==='fair'?`<button class="reason-link" data-reason="${item.id}">Neden görüyorum?</button>`:''}
+        ${state.feedMode==='fair'&&state.prefs.explain?`<button class="reason-link" data-reason="${item.id}">Neden görüyorum?</button>`:''}
         <div class="post-actions"><button class="action-btn">${I('message')} ${s.replies}</button><button class="action-btn">${I('repeat')} ${s.reshares}</button><button class="action-btn like-btn">${I('heart')} ${s.likes}</button><span class="action-btn">${I('chart')} ${s.views}</span><button class="action-btn">${I('bookmark')}</button></div>
       </div></div>
     </article>`;
   }
 
   function balanceCard(){
-    const w=state.wellbeing;if(!w || !w.nudge || !state.prefs.balance) return '';
+    const w=state.wellbeing;if(!w || !w.nudge || !state.prefs.balance || state.balanceHiddenToday) return '';
     return `<aside class="balance-card" id="balanceCard"><div class="balance-row"><div class="balance-icon">${I('spark')}</div><div class="balance-copy"><strong>DENGE · Kısa bir ara iyi gelebilir</strong><p>${esc(w.reason)} Bu bir davranış örüntüsü desteğidir; tanı değildir.</p><button class="link-btn" id="break5">5 dakikalık hatırlatıcı kur</button></div><button class="icon-btn" id="dismissBalance">✕</button></div></aside>`;
   }
 
@@ -138,36 +151,102 @@
     bindHome();
   }
 
+  function bindModerationActions(){
+    $('#dismissContext')?.addEventListener('click',()=>{$('#contextAssistant')?.classList.add('hidden');});
+    $('#rewriteBtn')?.addEventListener('click',()=>{const editor=$('#composerText');editor?.focus();editor?.select();toast('Metni düzenleyebilirsin; BAĞLAM yazdıkça yeniden analiz eder.');});
+    $('#publishAnyway')?.addEventListener('click',()=>publishComposer(true));
+    $('#appealBtn')?.addEventListener('click',openAppeal);
+  }
+
+  function refreshModerationCard(){
+    // Kritik final düzeltmesi: yazı yazılırken composer DOM'una hiçbir düğüm
+    // ekleyip çıkarmıyoruz. Opera/Chromium bazı sistemlerde kardeş DOM düğümü
+    // remove/insert edildiğinde textarea odağını düşürebiliyor. Kart ilk render'da
+    // hazır ve gizli tutuluyor; analiz geldikçe sadece mevcut metin düğümleri güncelleniyor.
+    const card=$('#contextAssistant');
+    if(!card) return;
+    const m=state.moderation;
+    if(!state.prefs.context || !m){
+      card.classList.add('hidden');
+      return;
+    }
+    const decision = m.decision==='allow'?'Yayınlanabilir':m.decision==='review'?'İnceleme öner':'Bağlamı kontrol et';
+    const explanation = `${m.explanation||''}${m.style_label==='sarcasm_irony'?' Anlatım biçimi ironi/sarkazm sinyali taşıyor.':''}`;
+    const set=(sel,value)=>{const el=$(sel);if(el)el.textContent=value;};
+    set('#contextMessage',explanation);
+    set('#contextDecision',decision);
+    set('#contextConfidence',pct(m.confidence));
+    set('#contextHarm',pct(m.harm_score));
+    set('#contextSarcasm',pct(m.sarcasm_score));
+    set('#contextStatus',`${m.model_version||''} · ${m.latency_ms} ms`);
+    card.classList.remove('hidden');
+  }
+
   function bindHome(){
     const ta=$('#composerText');
     if(ta){ ta.addEventListener('input',e=>{state.composer=e.target.value;$('#charCount').textContent=`${state.composer.length}/1000`; debounceAnalyze();}); }
-    $$('[data-mode]').forEach(b=>b.onclick=async()=>{state.feedMode=b.dataset.mode; await loadRanking(); renderHome();});
+    $$('[data-mode]').forEach(b=>b.onclick=async()=>{const next=b.dataset.mode;if(next==='fair'&&!state.prefs.fair){toast('Adil Görünürlük tercihlerden kapalı.');return;}state.feedMode=next;await loadRanking();renderHome();});
     $$('.like-btn').forEach(b=>b.onclick=()=>b.classList.toggle('liked'));
     $$('[data-reason]').forEach(b=>b.onclick=()=>openReason(Number(b.dataset.reason)));
-    $('#dismissContext')?.addEventListener('click',()=>{$('#contextAssistant')?.remove();});
-    $('#rewriteBtn')?.addEventListener('click',()=>{state.composer='Bu yaklaşımın neden sonuç vermediğini birlikte tartışalım.'; analyzeComposer(true);});
-    $('#publishAnyway')?.addEventListener('click',()=>toast('Gönderi prototip akışında yayınlandı.'));
-    $('#publishBtn')?.addEventListener('click',()=>toast(state.moderation?.decision==='review'?'Gönderi önce inceleme akışına yönlendirildi.':'Gönderi prototip akışında yayınlandı.'));
-    $('#appealBtn')?.addEventListener('click',openAppeal);
-    $('#dismissBalance')?.addEventListener('click',()=>$('#balanceCard')?.remove());
-    $('#break5')?.addEventListener('click',()=>{api('/api/wellbeing/nudge-response?response=break_5',{method:'POST'}).then(()=>toast('5 dakikalık demo hatırlatıcı kaydedildi.'));});
+    bindModerationActions();
+    $('#publishBtn')?.addEventListener('click',()=>publishComposer(false));
+    $('#dismissBalance')?.addEventListener('click',async()=>{state.balanceHiddenToday=true;try{localStorage.setItem(HIDE_BALANCE_KEY,todayKey())}catch{}$('#balanceCard')?.remove();try{await api('/api/wellbeing/nudge-response?response=hide_today',{method:'POST'})}catch{}});
+    $('#break5')?.addEventListener('click',async()=>{try{await api('/api/wellbeing/nudge-response?response=break_5',{method:'POST'});clearTimeout(state.breakTimer);state.breakTimer=setTimeout(()=>toast('DENGE: 5 dakikalık ara süresi doldu.'),5*60*1000);toast('5 dakikalık hatırlatıcı kuruldu.');}catch(e){toast(e.message)}});
   }
 
   let analyzeTimer;
+  let analyzeSeq=0;
   function debounceAnalyze(){clearTimeout(analyzeTimer);analyzeTimer=setTimeout(()=>analyzeComposer(),350)}
   async function analyzeComposer(rerender=false){
-    if(!state.composer.trim()){state.moderation=null;if(rerender)renderHome();return;}
-    try{state.moderation=await api('/api/moderation/analyze',{method:'POST',body:JSON.stringify({text:state.composer})}); if(rerender||state.page==='home')renderHome();}
-    catch(e){toast(e.message)}
+    const requestSeq=++analyzeSeq;
+    const text=state.composer;
+    if(!state.prefs.context){
+      state.moderation=null;
+      if(state.page==='home'){rerender?renderHome():refreshModerationCard();}
+      return;
+    }
+    if(!text.trim()){
+      state.moderation=null;
+      if(state.page==='home'){rerender?renderHome():refreshModerationCard();}
+      return;
+    }
+    try{
+      const result=await api('/api/moderation/analyze',{method:'POST',body:JSON.stringify({text})});
+      if(requestSeq!==analyzeSeq || text!==state.composer) return;
+      state.moderation=result;
+      if(state.page==='home'){rerender?renderHome():refreshModerationCard();}
+    }
+    catch(e){if(requestSeq===analyzeSeq)toast(e.message)}
+  }
+
+
+  async function publishComposer(overrideWarning=false){
+    const text=state.composer.trim();
+    if(!text){toast('Gönderi metni boş olamaz.');return;}
+    try{
+      const out=await api('/api/posts/publish',{method:'POST',body:JSON.stringify({text,override_warning:overrideWarning})});
+      state.moderation=out.moderation||state.moderation;
+      if(out.published){
+        toast(out.message||'Gönderi yerel prototip akışında yayınlandı.');
+        await loadRanking();
+        renderHome();
+      }else if(out.status==='warning_requires_confirmation'){
+        toast('BAĞLAM uyarısı var. İstersen “Yine de Yayınla” ile bilinçli olarak devam edebilirsin.');
+        renderHome();
+      }else{
+        toast(out.message||'Gönderi inceleme akışına yönlendirildi.');
+        renderHome();
+      }
+    }catch(e){toast(e.message)}
   }
 
   async function loadRanking(){
-    try{state.ranking=await api('/api/ranking/rank',{method:'POST',body:JSON.stringify({fair:state.feedMode==='fair'})});}
+    try{state.ranking=await api('/api/ranking/rank',{method:'POST',body:JSON.stringify({fair:state.feedMode==='fair'&&state.prefs.fair})});}
     catch(e){toast(`Sıralama yüklenemedi: ${e.message}`)}
   }
 
   async function loadWellbeing(){
-    try{state.wellbeing=await api('/api/wellbeing/event',{method:'POST',body:JSON.stringify({session_duration_sec:360,posts_scrolled:150,viewed_posts:120,rapid_skips:96,total_dwell_sec:160,reentry_count:2,enabled:true})});}
+    try{state.wellbeing=await api('/api/wellbeing/event',{method:'POST',body:JSON.stringify({session_duration_sec:360,posts_scrolled:150,viewed_posts:120,rapid_skips:96,total_dwell_sec:160,reentry_count:2,enabled:state.prefs.balance})});}
     catch(e){console.warn(e)}
   }
 
@@ -176,7 +255,7 @@
     catch(e){toast(e.message)}
   }
 
-  function openAppeal(){const m=state.moderation;$('#appealDecision').textContent=`Karar: ${m?.decision||'warn'}`;$('#appealConfidence').textContent=`Güven: ${m?pct(m.confidence):'—'}`;$('#appealBody').innerHTML=`<div class="decision-summary"><strong>Karar: ${esc(m?.decision||'warn')}</strong><span>Güven: ${m?pct(m.confidence):'—'}</span></div><label class="field-label">Neden yeniden incelenmeli?<textarea id="appealReason" minlength="3" maxlength="500" required>İfadenin bağlamının ve anlatım biçiminin birlikte yeniden değerlendirilmesini rica ediyorum.</textarea></label>`;$('#sendAppeal').classList.remove('hidden');$('#appealDialog').showModal();}
+  function openAppeal(){const m=state.moderation;if(!m?.id){toast('Önce BAĞLAM analizinin tamamlanmasını bekleyin.');return;}$('#appealBody').innerHTML=`<div class="decision-summary"><strong>Karar: ${esc(m.decision||'warn')}</strong><span>Modelin kararından eminliği: ${pct(m.confidence)}</span></div><label class="field-label">Neden yeniden incelenmeli?<textarea id="appealReason" minlength="3" maxlength="500" required>İfadenin bağlamının ve anlatım biçiminin birlikte yeniden değerlendirilmesini rica ediyorum.</textarea></label>`;$('#sendAppeal').classList.remove('hidden');$('#appealDialog').showModal();}
 
   function renderExplore(){
     $('#mainColumn').innerHTML=`<div class="explore-head"><div class="search-wrap">${I('search')}<input id="exploreSearch" class="search" placeholder="Arama yap" aria-label="Arama yap"></div></div>
@@ -201,7 +280,7 @@
   function renderPreferences(){
     const settings=[['context','BAĞLAM yazım desteği','Yayınlamadan önce olası zarar, belirsizlik ve anlatım biçimi sinyallerini gösterir.'],['fair','Adil Görünürlük modu','Kaliteli ve ilgili içeriklerde önceki görünürlük bağımlılığını azaltan deneysel sıralama.'],['balance','DENGE mola önerileri','Kaydırma hızı, hızlı geçiş ve oturum süresi birlikte belirginleştiğinde isteğe bağlı hatırlatma.'],['explain','Neden görüyorum? açıklamaları','Adil sıralama sinyallerini kullanıcıya okunabilir biçimde açıklar.']];
     $('#mainColumn').innerHTML=`${head('Bağlam ve Veri Tercihleri')}<div class="settings-intro">Bu sayfa NSosyal Bağlam prototipinin hangi sinyalleri işlediğini ve hangi verileri bilerek toplamadığını gösterir. Tercihler yalnızca demo oturumunda etkilidir.</div><div class="section-label">Modül kontrolleri</div>${settings.map(s=>`<div class="setting-row"><div><div class="setting-title">${esc(s[1])}</div><div class="setting-desc">${esc(s[2])}</div></div><button class="switch ${state.prefs[s[0]]?'on':''}" data-pref="${s[0]}" aria-label="${esc(s[1])}"></button></div>`).join('')}<div class="section-label">Veri minimizasyonu</div><div class="data-grid"><div class="data-box"><h3>İşlenen prototip verileri</h3><ul><li>Gönderi metni</li><li>Sentetik gönderi kalite/ilgililik sinyalleri</li><li>Oturum özeti: süre, kaydırma, hızlı geçiş, görüntüleme süresi</li><li>İtiraz gerekçesi</li></ul></div><div class="data-box"><h3>Toplanmayan veriler</h3><ul><li>GPS / kesin konum</li><li>Mikrofon veya kamera</li><li>Kişiler / rehber</li><li>Özel mesaj içeriği</li><li>Diğer uygulamalardaki davranış</li></ul></div></div>`;
-    $$('[data-pref]').forEach(b=>b.onclick=()=>{const k=b.dataset.pref;state.prefs[k]=!state.prefs[k];b.classList.toggle('on',state.prefs[k]);toast(`${b.previousElementSibling.querySelector('.setting-title').textContent}: ${state.prefs[k]?'açık':'kapalı'}`)});
+    $$('[data-pref]').forEach(b=>b.onclick=async()=>{const k=b.dataset.pref;state.prefs[k]=!state.prefs[k];savePrefs(state.prefs);b.classList.toggle('on',state.prefs[k]);if(k==='fair'&&!state.prefs.fair&&state.feedMode==='fair'){state.feedMode='normal';await loadRanking()}if(k==='context'&&state.prefs.context&&state.composer.trim())await analyzeComposer(false);if(k==='balance'){state.balanceHiddenToday=false;try{localStorage.removeItem(HIDE_BALANCE_KEY)}catch{}await loadWellbeing()}toast(`${b.previousElementSibling.querySelector('.setting-title').textContent}: ${state.prefs[k]?'açık':'kapalı'}`)});
   }
 
   function renderResearch(){
@@ -233,12 +312,13 @@
   }
 
   function bindDialogs(){
-    $('#cancelAppeal').onclick=()=>$('#appealDialog').close();
-    $('#appealForm').addEventListener('submit',async e=>{e.preventDefault();const reason=$('#appealReason')?.value||'';try{const data=await api('/api/moderation/appeal',{method:'POST',body:JSON.stringify({moderation_result_id:'DEMO-MOD-001',reason})});$('#appealBody').innerHTML=`<div class="success-box"><div class="success-mark">✓</div><strong>İtiraz simüle kuyruğa alındı</strong><p style="font-size:11px;color:var(--muted)">Takip kodu: ${esc(data.id)} · durum: ${esc(data.status)}</p></div>`;$('#sendAppeal').classList.add('hidden');setTimeout(()=>{},0);}catch(err){toast(err.message)}});
+    $('#cancelAppeal').onclick=()=>$('#appealDialog').close();$('#closeAppealTop')?.addEventListener('click',()=>$('#appealDialog').close());
+    $('#appealForm').addEventListener('submit',async e=>{e.preventDefault();const reason=$('#appealReason')?.value||'';try{const data=await api('/api/moderation/appeal',{method:'POST',body:JSON.stringify({moderation_result_id:state.moderation?.id,reason})});$('#appealBody').innerHTML=`<div class="success-box"><div class="success-mark">✓</div><strong>İtiraz simüle kuyruğa alındı</strong><p style="font-size:11px;color:var(--muted)">Takip kodu: ${esc(data.id)} · durum: ${esc(data.status)}</p></div>`;$('#sendAppeal').classList.add('hidden');setTimeout(()=>{},0);}catch(err){toast(err.message)}});
     $('#closeReason').onclick=()=>$('#reasonDialog').close();
   }
 
   async function init(){
+    try{state.balanceHiddenToday=localStorage.getItem(HIDE_BALANCE_KEY)===todayKey()}catch{}
     renderNav(); renderRightRail(); bindDialogs();
     await Promise.all([loadRanking(),loadWellbeing()]);
     await analyzeComposer(false);
