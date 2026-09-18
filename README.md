@@ -1,4 +1,4 @@
-# NSosyal Bağlam — 2026 Rebuild
+# NSosyal Bağlam — 2026 Final Competition Prototype (Context Guard V4.1)
 
 **NSosyal entegrasyon prototipi — resmî NSosyal uygulaması, resmî NSosyal özelliği veya resmî API entegrasyonu değildir.**
 
@@ -94,7 +94,7 @@ cd backend
 .\.venv314\Scripts\python.exe -m pytest -q
 ```
 
-Beklenen final-demo test sayısı: **21**.
+Güncel final regresyon paketi: **56/56 test geçti**. GitHub Actions CI, Python **3.13** ve **3.14** üzerinde aynı regresyon paketini çalıştırır.
 
 ## Gerçek teknik durum
 
@@ -139,5 +139,5 @@ Ayrıntılı kayıt:
 
 UI referansında yalnızca kamuya açık/gözlemlenebilir ürün yapısı kullanılır; erişilemeyen ekranlar “resmî NSosyal tasarımı” diye uydurulmaz.
 
-## Final Context Guard v4 (2026-09-16)
+## Final Context Guard v4.1 (2026-09-16)
 Canlı BAĞLAM motoru, rapordaki TF-IDF + Logistic Regression tabanını koruyarak Türkçe bağlam/küfür güvenlik katmanıyla güçlendirilmiştir. Kişiye yöneltilmiş hakaret/küfür, hedefi belirsiz argo, alıntı/reddetme bağlamı, bazı gizlenmiş yazımlar ve düşük model güveni ayrı ele alınır. Arayüzde `Modelin kararından eminliği`, `Zarar sinyali` ve `İroni / sarkazm sinyali` gösterilir; bunlar kalibre edilmiş olasılık değildir. Ayrıntılar `FINAL_DEMO_NOTES_2026-09-16_CONTEXT_GUARD_V4.md` dosyasındadır.

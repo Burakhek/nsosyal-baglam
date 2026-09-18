@@ -1,1 +1,5 @@
-Bu dosya paket oluşturulduktan sonra ZIP SHA-256 özetiyle birlikte teslim notunda paylaşılır.
+# Final source archive SHA-256
+0db4c037729c305df801c53c1a3c3dc4ea18490b27efae9613b51f2498919f61  NSosyal_Baglam_2026_FINAL_CONTEXT_GUARD_V4_1_CLEAR_LABEL.zip
+
+# GitHub update bundle SHA-256
+af0d5222078adb04f949c5eeb4d773cfdf8d3259fe3fa32f51c7ccb9c27a422c  NSosyal_Baglam_GitHub_Final_Update_Bundle.zip

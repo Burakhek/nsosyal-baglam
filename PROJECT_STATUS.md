@@ -1,34 +1,39 @@
-# PROJECT STATUS — NSosyal Bağlam 2026 Rebuild
+# PROJECT STATUS — NSosyal Bağlam 2026 Final (Context Guard V4.1)
 
 ## Çalışan prototip
-- FastAPI backend: mevcut
-- Tek-origin statik sosyal UI: mevcut
-- Moderasyon API: mevcut
-- İtiraz akışı: mevcut (simüle inceleme kuyruğu)
-- ADALET ranking ve açıklama API: mevcut
-- DENGE davranış örüntüsü API: mevcut
-- Metrik API'leri: mevcut
-- Jüri/Araştırma ekranı: mevcut
+- FastAPI backend: çalışıyor
+- Tek-origin statik sosyal UI: çalışıyor
+- BAĞLAM moderasyon API ve yayın öncesi karar akışı: çalışıyor
+- İtiraz akışı: çalışıyor (simüle inceleme kuyruğu)
+- ADALET sıralama ve “Neden görüyorum?” açıklama API: çalışıyor
+- DENGE davranış örüntüsü ve mola önerisi API: çalışıyor
+- Metrik API'leri: çalışıyor
+- Jüri/Araştırma ekranı: çalışıyor
+- Windows ve macOS başlatma betikleri: mevcut
 
-## Doğrulanan testler
-- `pytest`: 12/12 geçti (çalışma ortamında Python 3.13.5 ile mantıksal regresyon testi)
-- `evaluation/run_evaluation.py`: başarıyla tekrar üretildi
-- API smoke test: root, health, moderation ve wellbeing başarılı
-- JavaScript syntax check: başarılı
+## Doğrulama
+- Yerel final regresyon paketi: **56/56 test geçti**
+- GitHub Actions CI: **Python 3.13 başarılı**
+- GitHub Actions CI: **Python 3.14 başarılı**
+- Final CI; bağımlılık kurulumu ve `python -m pytest -q` regresyon paketini çalıştırır.
+- Context Guard V4.1; açık küfür/hakaret, hedef bağlamı, alıntı/reddetme, bazı gizlenmiş yazımlar ve düşük güvenli girdiler için ek regresyon testleri içerir.
 
-## Python 3.14 hedefi
-Çalışma konteynerinde Python 3.14 kurulu olmadığı için paket doğrudan 3.14 üzerinde burada koşturulamadı. Bunun yerine PyPI üzerinde CPython 3.14 Windows wheel/sınıflandırıcı desteği doğrulanmış bağımlılıklar seçildi. Windows'taki gerçek kurulum `py -3.14` ile yapılmalıdır.
+## Teknik kapsam
+- Moderasyon tabanı: word TF-IDF + character TF-IDF + Logistic Regression
+- Canlı demo katmanı: şeffaf Türkçe bağlam/küfür güvenlik kuralları
+- ADALET: kalite/ilgililik kapılarıyla bounded fairness yeniden sıralama
+- DENGE: oturum süresi, kaydırma hızı, dwell time ve hızlı geçiş sinyalleri
+- Python hedefi: **3.14**; GitHub Actions üzerinde doğrulandı
 
 ## Açık sınırlar
-- Resmî NSosyal API yok
-- Gerçek NSosyal kullanıcı verisi yok
-- Gerçek saha/usability sonucu yok
-- Moderasyon modeli BERTurk değil
-- Güncel NSosyal'e görsel yakınlık kamuya açık ekranlarla sınırlı; giriş gerektiren yüzeyler uydurulmadı
+- Resmî NSosyal API entegrasyonu yok; proje bağımsız entegrasyon prototipidir.
+- Gerçek NSosyal kullanıcı verisi kullanılmaz.
+- Moderasyon modeli BERTurk değildir.
+- Moderasyon metrikleri küçük sentetik test kümesine aittir; NSosyal üretim performansı değildir.
+- ADALET ve DENGE sonuçları kontrollü/sentetik prototip senaryolarıdır.
+- Mevcut kullanılabilirlik çalışmaları prototip ölçeğindedir; gerçek platform saha dağıtımı değildir.
 
-## Sonraki rapor işleri
-1. Kullanıcının Windows Python 3.14 kurulumunu doğrulama
-2. Gerçek cihazdan temiz 1366×768 ekran görüntüleri
-3. GitHub remote oluşturma/push
-4. Gerçek 3–5 kişilik kullanılabilirlik testi (uygunsa)
-5. Teknik rapor DOCX/PDF finalizasyonu
+## Final repository durumu
+- Context Guard V4.1 kodu, final regresyon testleri ve sürüm notları `main` branch'indedir.
+- `.pytest_cache`, `__pycache__` ve `*.pyc` gibi geçici dosyalar repository'ye dahil edilmez.
+- CI workflow: `.github/workflows/ci.yml`
